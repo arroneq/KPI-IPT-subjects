@@ -1,0 +1,250 @@
+\documentclass[a4paper,14pt]{extarticle} %the default article class is limited to 12pt, but you can go up to 14, 17 or 20 points if you use the extarticle class:
+\usepackage{cmap} %make LaTeX PDF output copy-and-pasteable
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,ukrainian]{babel}
+
+\usepackage{amssymb,amsfonts,amsmath,cite,enumerate,float}
+\usepackage{indentfirst} %set an additional space before a paragraph at the begining of new section
+\usepackage{setspace}
+\usepackage{textcomp}
+
+\usepackage{geometry} 
+\geometry{left=1.25cm}
+\geometry{right=1.25cm}
+\geometry{top=1cm}
+\geometry{bottom=2cm}
+
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\graphicspath{{images/}} %path to images
+
+\parskip=1mm %space between paragraphs
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{color}
+% 1) tutorial about xcolor:  https://www.overleaf.com/learn/latex/Using_colours_in_LaTeX
+% 2) huge tutorial about xcolor: https://latex-tutorial.com/color-latex/ 
+% 3) RGB calculator: https://www.w3schools.com/colors/colors_rgb.asp
+
+\usepackage{minted} 
+\usemintedstyle[Python]{vs}
+% 1) minted (installing): https://leportella.com/minted-vscode/
+% 2) minted (styles): https://sharelatex.psi.ch/learn/Code_Highlighting_with_minted
+% 3) minted (environment options): https://latex-tutorial.com/code-listings/
+
+\usepackage{listings} %for code
+
+\lstset{
+    frame=single, %lines
+    language=Python,
+    aboveskip=3mm,
+    belowskip=3mm,
+    columns=flexible,
+    basicstyle={\small\ttfamily},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    commentstyle=\color{OliveGreen},
+    stringstyle=\color{mauve},
+    keywordstyle=\bfseries\color{Blue},
+    emph={[1]import, as, for, return}, emphstyle={[1]\color{violet}},
+    emph={[2]range, abs, build_t, build_t_rev, find_x, find_y}, emphstyle={[2]\color{Brown}},
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4
+}
+
+\begin{document}
+
+\input{title}
+
+\newpage
+
+\subsection*{Завдання}
+
+Розв’язати систему рівнянь з кількістю значущих цифр $m=6$. Якшо матриця системи
+симетрична, то розв’язання проводити за методом квадратних коренів, якщо матриця системи
+несиметрична, то використати метод Гауса. Вивести всі проміжні результати (матриці $A$, що
+отримуються в ході прямого ходу методу Гауса, матрицю зворотного ходу методу Гауса, або
+матрицю $T$ та вектор $y$ для методу квадратних коренів), та розв’язок системи. Навести 
+результат перевірки: вектор нев'язки $r = |b - Ax|$, де $x$ -- отриманий розв’язок.
+
+\subsection*{Варіант завдання}
+
+Розглядається така система рівнянь:
+
+\begin{equation}
+    \left\{
+    \begin{aligned}
+        &5{,}5x_1 + 7x_2 + 6x_3 + 5{,}5x_4 = 23 \\
+        &7x_1 + 10{,}5x_2 + 8x_3 + 7x_4 = 32 \\
+        &6x_1 + 8x_2 + 10{,}5x_3 + 9x_4 = 33 \\
+        &5{,}5x_1 + 7x_2 + 9x_3 + 10{,}5x_4 = 31 \\
+    \end{aligned} \label{equations}
+    \right.
+\end{equation}
+
+З цієї системи запишемо матрицю коефіцієнтів $A$ та матрицю вільних членів $B$:
+
+\[
+A=
+    \begin{pmatrix}
+        5.5 & 7 & 6 & 5.5 \\
+        7 & 10.5 & 8 & 7 \\
+        6 & 8 & 10.5 & 9 \\
+        5.5 & 7 & 9 & 10.5 \\
+    \end{pmatrix},
+B = 
+    \begin{pmatrix}
+        23 \\
+        32 \\
+        33 \\
+        31 \\
+    \end{pmatrix}.
+\]
+
+Матриця $A$ є симетричною, отже, завдання зводиться до 
+знаходження розв'язку системи рівнянь методом квадратного кореня.
+
+\subsection*{Теоретичні відомості}
+
+Метод квадратного кореня полягає у тому, щоб спершу представити 
+початкову матрицю $A$ у вигляді добутку двох взаємно транспонованих матриць $A=TT'$, 
+а далі зворотнім ходом віднайти шуканий розв'язок $x$ початкової системи рівнянь. 
+Тож на першому кроці відбувається так звана факторизація, тобто прямий хід, 
+а на другому кроці -- зворотній хід, тобто фінальне знаходження коренів. \\
+
+\textbf{Крок 1.} Прямий хід (факторизація):
+
+\begin{equation}
+\label{formula:TT'}
+    \begin{pmatrix}
+        t_{11} & 0 & 0 & 0 \\
+        t_{21} & t_{22} & 0 & 0 \\
+        t_{31} & t_{32} & t_{33} & 0 \\
+        t_{41} & t_{42} & t_{43} & t_{44} \\
+    \end{pmatrix}
+    \begin{pmatrix}
+        t_{11} & t_{12} & t_{13} & t_{14} \\
+        0 & t_{22} & t_{23} & t_{24} \\
+        0 & 0 & t_{33} & t_{34} \\
+        0 & 0 & 0 & t_{44} \\
+    \end{pmatrix} = 
+    \begin{pmatrix}
+        a_{11} & a_{12} & a_{13} & a_{14} \\
+        a_{21} & a_{22} & a_{23} & a_{24} \\
+        a_{31} & a_{32} & a_{33} & a_{34} \\
+        a_{41} & a_{42} & a_{43} & a_{44} \\
+    \end{pmatrix},
+\end{equation}
+
+\newpage
+де елементи матриці $T$ шукатимемо за співвідношеннями, 
+які можна отримати \par послідовним перемноженням елементів у рівнянні 
+(\ref{formula:TT'}):
+
+\begin{align*}
+    t_{11}=\sqrt{a_{11}}\ , t_{i1}=\frac{a_{i1}}{t_{11}}& &&\text{для елементів першого стовпця,} \\ 
+    t_{ii}=\sqrt{a_{ii}-\sum\limits_{k<i}t_{ik}^2}& &&\text{для діагональних елементів,} \\
+    t_{ij}=\frac{a_{ij}-\sum\limits_{k<j}t_{ik}t_{jk}}{t_{jj}}& &&\text{для елементів під діагоналлю,}
+\end{align*}
+
+причому важливим є порядок застосування формул. \\
+
+\begin{wrapfigure}[6]{r}{0.34\linewidth}
+    \vspace{-1.1cm}
+    \center{\includegraphics[width=1\linewidth]{Images/image.png}}
+    \label{fig:instance}
+\end{wrapfigure}
+
+Правило обрахунку елементів матриці $T$ можна описати так: спочатку з'ясовуємо перший 
+діагональний елемент $a_{11}$, далі обраховуємо всі елементи під ним, тобто елементи 
+відповідного стовпця. Наступним кроком рахуємо другий діагональний елемент, а тоді знову всі 
+елементи відповідного стовпця і так далі. На рисунку праворуч зображена відповідна схема. \\
+
+\textbf{Крок 2.} Зворотній хід:
+
+\begin{align}
+    \text{Із початкової системи рівнянь} \qquad &Ax=B, \\
+    \text{тоді враховуючи, що } A=TT' \qquad &TT'x=B, \\
+    \parbox{6.9cm}{розіб'ємо отримане рівняння на такі два послідовних підкроки} \qquad 
+    &\begin{cases}
+        T'x=y \\
+        Ty=B. \\
+    \end{cases} \label{formula:step 2}
+\end{align}
+
+Оскільки кожна з матриць $T$ та $T'$ має діагональний вид, то обидва 
+матричні рівняння системи (\ref{formula:step 2}) розв'язуються зворотнім 
+ходом (як в методі Гауса). Наведемо формули обрахунку:  
+
+\begin{align*}
+    y_1=\frac{b_1}{t_{11}},\ &y_i=\frac{b_i-\sum\limits_{k=1}^{i-1}t_{ik}y_k}{t_{ii}} \\
+    x_n=\frac{y_n}{t'_{nn}},\ &x_i=\frac{y_i-\sum\limits_{k=i+1}^{n}t'_{ik}x_k}{t'_{ii}}. \\
+\end{align*}
+
+\subsection*{Програмний код}
+
+\lstinputlisting{mkk.py}
+
+\newpage
+\subsection*{Результати й проміжні кроки}
+
+Наведемо проміжні значення матриць $T, T'$ методу квадратного кореня:
+
+\begin{align}
+T = 
+\begin{pmatrix} 
+    2.34520788 & 0          & 0          & 0          \\
+    2.98481003 & 1.26131245 & 0          & 0          \\
+    2.5584086  & 0.28829998 & 1.96759461 & 0          \\
+    2.34520788 & 0          & 1.52470431 & 1.63562733 \\
+\end{pmatrix} \\ {} \notag \\
+T' =
+\begin{pmatrix}
+    2.34520788 & 2.98481003 & 2.5584086  & 2.34520788 \\
+    0          & 1.26131245 & 0.28829998 & 0          \\
+    0          & 0          & 1.96759461 & 1.52470431 \\
+    0          & 0          & 0          & 1.63562733 \\
+\end{pmatrix}
+\end{align}
+
+Визначити правильність зазначених матриць можна, власне кажучи, 
+зробивши таку перевірку: $A=TT'$. Також варто зазначити проміжний вектор $y$, 
+отриманий після розв'язку зворотнім ходом рівняння $Ty=B$:
+\[ y = (9.80723295, 2.16224991, 3.70285334, 1.43935205). \]
+
+І наостанок був обрахований вектор нев'язки $r=|B-Ax|$, 
+який вказує похибку обчислень (коротше кажучи, це перевірка правильності розв'язку):
+\[ r =  (0, 0, 0, 0). \]
+
+Судячи з вектора нев'язки $r$, отриманий розв'язок 
+$x=(0.16, 1.44, 1.2, 0.88)$ і є розв'язком початкової 
+системи рівнянь $Ax=B$, зображеної у виразі (\ref{equations}).
+Отже, остаточний розв'язок: 
+\[ x_1=0.16,\ x_2=1.44,\ x_3=1.2,\ x_4=0.88. \]
+
+\subsection*{Контрольні запитання}
+
+\begin{enumerate}
+    \item \textit{В чому полягає відмінність схеми Гауса із вибором головного елементу та схеми єдиного ділення?}
+
+    Фактично, відмінність між цими двома методами полягає у виборі головного елементу. Наприклад, у 
+    схемі єдиного ділення головним елементом завжди обирають перший коефіцієнт, натомість у методі 
+    вибору елементу можемо назначити головний елемент власноруч (наприклад, обрати деякий максимальний). 
+    Це запобігає накопиченню похибок округлення. Крім того, це дає можливість уникати ситуацій, 
+    коли першим коефіцієнтом є нуль.
+
+    \newpage \item \textit{В чому переваги схеми Гауса із вибором головного елементу порівняно із 
+    схемою єдиного ділення, схемою повного виключення?}
+
+    Переваги схеми повного виключення порівняно зі схемою єдиного ділення аналогічні до попереднього питання.
+
+    \item \textit{Коли факторизація за методом квадратного кореня неможлива для симетричної матриці?}
+
+    Відповідь на питання можна визначити із співвідношень, наведених на початку першого кроку теоретичних 
+    відомостей. Власне, ситуація факторизації можлива для комплексних значень, проте неможлива у випадку 
+    утворення нульових величин на місці діагональних елементів матриць $T$ та $T'$.
+\end{enumerate}
+
+\end{document}

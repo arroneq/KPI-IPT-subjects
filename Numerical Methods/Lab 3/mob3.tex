@@ -1,0 +1,420 @@
+\documentclass[a4paper,14pt]{extarticle} % the default article class is limited to 12pt, but you can go up to 14, 17 or 20 points if you use the extarticle class:
+\usepackage{cmap} % make LaTeX PDF output copy-and-pasteable
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,ukrainian]{babel}
+
+\usepackage{amssymb,amsfonts,mathtools,amsmath,cite,enumerate,float}
+\usepackage{indentfirst} % set an additional space before a paragraph at the begining of new section
+\usepackage{setspace}
+\usepackage{textcomp}
+\usepackage{cancel}
+
+\usepackage{romannum} % https://tex.stackexchange.com/questions/23487/how-can-i-get-roman-numerals-in-text
+\AtBeginDocument{\pagenumbering{arabic}}
+
+\usepackage{geometry} 
+\geometry{left=1.25cm}
+\geometry{right=1.25cm}
+\geometry{top=1cm}
+\geometry{bottom=2cm}
+
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\graphicspath{{images/}} % path to images
+
+\parskip=1mm % space between paragraphs
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{color}
+% 1) tutorial about xcolor:  https://www.overleaf.com/learn/latex/Using_colours_in_LaTeX
+% 2) huge tutorial about xcolor: https://latex-tutorial.com/color-latex/ 
+% 3) RGB calculator: https://www.w3schools.com/colors/colors_rgb.asp
+
+\usepackage{minted} 
+\usemintedstyle[Python]{vs}
+% 1) minted (installing): https://leportella.com/minted-vscode/
+% 2) minted (styles): https://sharelatex.psi.ch/learn/Code_Highlighting_with_minted
+% 3) minted (environment options): https://latex-tutorial.com/code-listings/
+
+\usepackage{listings} % for code
+
+\lstset{
+    frame=single, %lines
+    language=Python,
+    aboveskip=3mm,
+    belowskip=3mm,
+    columns=flexible,
+    basicstyle={\small\ttfamily},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    commentstyle=\color{OliveGreen},
+    stringstyle=\color{Mahogany},
+    morestring=[b]''',
+    showstringspaces=false,
+    keywordstyle=\bfseries\color{Blue},
+    emph={[1]import, as, for, return}, emphstyle={[1]\color{DarkOrchid}},
+    emph={[2]range, abs}, emphstyle={[2]\color{Sepia}},
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4
+}
+
+\begin{document}
+
+\input{title}
+
+\newpage
+
+\subsection*{Завдання}
+
+Якщо матриця не є матрицею із діагональною перевагою, привести систему до еквівалентної, у якій є 
+діагональна перевага (письмово). Написати програму розв’язання за ітераційним методом, який відповідає 
+заданому варіантові (метод простої ітерації для парних варіантів та метод Зейделя для непарних варіантів). 
+
+Для методу простої ітерації навести письмовий етап приведення матриці до діагональної переваги, лістинг 
+програми та результати її дії (на кожній ітерації вивести номер ітерації, наближене значення розв'язку, 
+значення критерію). 
+
+Для методу Зейделя навести письмовий етап приведення системи до діагональної переваги та до виду $A^TAx=A^Tb$. 
+Виконати розрахунки для цих двох варіантів вхідних матриць. Порівняти швидкість збіжності. Вміст звіту такий 
+самий, як і для методу простої ітерації.
+
+Обчислення проводити з $\varepsilon =10^{-4}$. Для кожної ітерації розраховувати 
+вектор нев’язки $r = |b - Ax|$, де $x$ -- отриманий розв’язок.
+
+\subsection*{Варіант завдання}
+
+Розглядається така система рівнянь:
+\begin{equation}
+    \left\{
+    \begin{aligned}
+        &5{,}5x_1 + 7x_2 + 6x_3 + 5{,}5x_4 = 23 \\
+        &7x_1 + 10{,}5x_2 + 8x_3 + 7x_4 = 32 \\
+        &6x_1 + 8x_2 + 10{,}5x_3 + 9x_4 = 33 \\
+        &5{,}5x_1 + 7x_2 + 9x_3 + 10{,}5x_4 = 31 \\
+    \end{aligned} \label{start equations}
+    \right.
+\end{equation}
+
+З цієї системи запишемо матрицю коефіцієнтів $A$ та матрицю вільних членів $B$:
+\[
+A=
+    \begin{pmatrix}
+        5.5 & 7 & 6 & 5.5 \\
+        7 & 10.5 & 8 & 7 \\
+        6 & 8 & 10.5 & 9 \\
+        5.5 & 7 & 9 & 10.5 \\
+    \end{pmatrix},\
+B = 
+    \begin{pmatrix}
+        23 \\
+        32 \\
+        33 \\
+        31 \\
+    \end{pmatrix}
+\]
+
+Розв'яжемо систему рівнянь (\ref{start equations}) за допомгою методу простої ітерації.
+
+\subsection*{Теоретичні відомості}
+
+Суть методу простої ітерації полягає у тому, щоб звести початкове матричне рівняння $Ax=B$ до вигляду 
+\begin{equation}
+    x_{k+1}=Cx_k+D, \label{iteration equation}
+\end{equation} 
+
+де для матриці $C$ мусить виконуватися умова
+\begin{equation} 
+    \forall i \quad \sum\limits_{j=1}^n |C_{ij}|\leqslant q<1 \label{C condition}
+\end{equation}
+
+Для виконання умови (\ref{C condition}) матриця $A$ має бути матрицею із діагональною перевагою, тобто 
+такою, для якої справедлива нерівність
+\begin{equation} 
+    \forall i,j \quad |a_{ii}| > \sum\limits_{i \neq j} |a_{ij}|
+\end{equation}
+
+Отже, для справного застосування ітераційного процесу (\ref{iteration equation}) обов'язковою умовою є 
+діагональний вид матриці $A$. Тоді, знайшовши елементи матриць $C$ та $D$ за формулами
+\begin{align*}
+    &c_{ij}=
+    \begin{cases}
+        0, &i=j \\
+        -\dfrac{a_{ij}}{a_{ii}}, &i\neq j \\
+    \end{cases} \\ 
+    &d_i = \dfrac{b_i}{a_{ii}}
+\end{align*}
+
+й задавши довільний вектор $x_0$ (наприклад, $x_0=(0,0,0,0)$), можна розпочинати пошук розв'язку із заданою 
+точністю $\varepsilon$ доти, доки
+\begin{equation}
+    \dfrac{q}{1-q}\ \max\limits_j|x_{k+1}-x_k| < \varepsilon
+\end{equation}
+
+\subsection*{Зведення матриці до вигляду із діагональною перевагою}
+Крок за кроком зведемо початкові матриці
+\begin{equation} A =
+    \begin{pmatrix}
+        5.5 & 7 & 6 & 5.5 \\
+        7 & 10.5 & 8 & 7 \\
+        6 & 8 & 10.5 & 9 \\
+        5.5 & 7 & 9 & 10.5 \\
+    \end{pmatrix},\
+    B = 
+    \begin{pmatrix}
+        23 \\
+        32 \\
+        33 \\
+        31 \\
+    \end{pmatrix}
+\end{equation}
+
+до виду із діагональною перевагою. Для зручності введемо ряд позначок: 
+\begin{align*}
+    &\circ &&\text{незмінений рядок,} \\
+    &\bullet &&\text{щойно змінений рядок,} \\
+    &\circledast &&\text{рядок, зведений до вигляду діагональної переваги.}
+\end{align*}
+
+Наведений нижче покроковий алгоритм не є уніфікованим, узагальненим. Тобто ці кроки застосовні лише до конкретного прикладу. 
+
+\begin{enumerate}[Крок 1:]
+    \item $ A,B \xrightarrow[]{\text{ \Romannum{4}}-\text{\Romannum{1} }} A',B' $
+    \[ A' =
+        \begin{pmatrix}
+            5.5 & 7 & 6 & 5.5 & \circ \\
+            7 & 10.5 & 8 & 7 & \circ \\
+            6 & 8 & 10.5 & 9 & \circ \\
+            0 & 0 & 3 & 5 & \bullet \\
+        \end{pmatrix},\
+        B' = 
+        \begin{pmatrix}
+            23 & \circ \\
+            32 & \circ \\
+            33 & \circ \\
+            8 & \bullet \\
+        \end{pmatrix}
+    \]
+    \item $ A',B' \xrightarrow[]{\text{ \Romannum{2}}-\frac{7}{5.5}\cdot\text{\Romannum{1} }} A'',B'' $
+    \[ A'' =
+        \begin{pmatrix}
+            5.5 & 7 & 6 & 5.5 & \circ \\
+            0 & 35/22 & 4/11 & 0 & \bullet \\
+            6 & 8 & 10.5 & 9 & \circ \\
+            0 & 0 & 3 & 5 & \circledast \\
+        \end{pmatrix},\
+        B'' = 
+        \begin{pmatrix}
+            23 & \circ \\
+            30/11 & \bullet \\
+            33 & \circ \\
+            8 & \circledast \\
+        \end{pmatrix}
+    \]
+    \item $ A'',B'' \xrightarrow[]{\text{ \Romannum{1}}-\text{\Romannum{4}}-4\cdot\text{\Romannum{2} }} A^*,B^* $
+    \[ A^* =
+        \begin{pmatrix}
+            5.5 & 7/11 & 17/11 & 0.5 & \bullet \\
+            0 & 35/22 & 4/11 & 0 & \circledast \\
+            6 & 8 & 10.5 & 9 & \circ \\
+            0 & 0 & 3 & 5 & \circledast \\
+        \end{pmatrix},\
+        B^* = 
+        \begin{pmatrix}
+            45/11 & \bullet \\
+            30/11 & \circledast \\
+            33 & \circ \\
+            8 & \circledast \\
+        \end{pmatrix}
+    \]
+    \item почергово обнулимо елементи $a_{31}, a_{32}$ та $a_{34}$:
+    \begin{enumerate} 
+        \item $ A^*,B^* \xrightarrow[]{\text{ \Romannum{3}}-\frac{6}{5.5}\cdot\text{\Romannum{1} }} A^{**},B^{**} $
+        \[ A^{**} =
+            \begin{pmatrix}
+                5.5 & 7/11 & 17/11 & 0.5 & \circledast \\
+                0 & 35/22 & 4/11 & 0 & \circledast \\
+                0 & 884/121 & 2133/242 & 93/11 & \bullet \\
+                0 & 0 & 3 & 5 & \circledast \\
+            \end{pmatrix},\
+            B^{**} = 
+            \begin{pmatrix}
+                45/11 & \circledast \\
+                30/11 & \circledast \\
+                3453/121 & \bullet \\
+                8 & \circledast \\
+            \end{pmatrix}
+        \]
+        \item $ A^{**},B^{**} \xrightarrow[]{\text{ \Romannum{3}}-\frac{22}{35}\cdot\frac{884}{121}\cdot\text{\Romannum{2} }} A^{\star},B^{\star} $
+        \[ A^{\star} =
+            \begin{pmatrix}
+                5.5 & 7/11 & 17/11 & 0.5 & \circledast \\
+                0 & 35/22 & 4/11 & 0 & \circledast \\
+                0 & 0 & 5501/770 & 93/11 & \bullet \\
+                0 & 0 & 3 & 5 & \circledast \\
+            \end{pmatrix},\
+            B^{\star} = 
+            \begin{pmatrix}
+                45/11 & \circledast \\
+                30/11 & \circledast \\
+                1233/77 & \bullet \\
+                8 & \circledast \\
+            \end{pmatrix}
+        \]
+        \item $ A^{\star},B^{\star} \xrightarrow[]{\text{ \Romannum{3}}-\frac{1}{5}\cdot\frac{93}{11}\cdot\text{\Romannum{4} }} A^{\star\star},B^{\star\star} $
+        \[ A^{\star\star} =
+            \begin{pmatrix}
+                5.5 & 7/11 & 17/11 & 0.5 & \circledast \\
+                0 & 35/22 & 4/11 & 0 & \circledast \\
+                0 & 0 & 29/14 & 0 & \bullet \\
+                0 & 0 & 3 & 5 & \circledast \\
+            \end{pmatrix},\
+            B^{\star\star} = 
+            \begin{pmatrix}
+                45/11 & \circledast \\
+                30/11 & \circledast \\
+                87/35 & \bullet \\
+                8 & \circledast \\
+            \end{pmatrix}
+        \]
+    \end{enumerate}
+\end{enumerate}
+
+Таким чином зведені до діагонального виду матриці виглядатимуть так:
+\begin{equation} A^{\diamond} =
+    \begin{pmatrix}
+        5.5 & 7/11 & 17/11 & 0.5 \\
+        0 & 35/22 & 4/11 & 0 \\
+        0 & 0 & 29/14 & 0 \\
+        0 & 0 & 3 & 5 \\
+    \end{pmatrix},\
+    B^{\diamond} = 
+    \begin{pmatrix}
+        45/11 \\
+        30/11 \\
+        87/35 \\
+        8 \\
+    \end{pmatrix} \label{diagonal}
+\end{equation}
+
+\subsection*{Програмний код}
+
+\lstinputlisting{iteration.py}
+
+\subsection*{Результати й проміжні кроки}
+
+Iтерація 1: \parbox[t]{15cm}{x = [0.74380165, 1.71428571, 1.2, 1.6] \\
+            criterion = 2.571428571428571 \\ } \par
+
+Iтерація 2: \parbox[t]{15cm}{x = [0.06280992, 1.44, 1.2, 0.88] \\
+            criterion = 1.0799999999999998 \\ } \par
+
+Iтерація 3: \parbox[t]{15cm}{x = [0.16, 1.44, 1.2, 0.88] \\
+            criterion = 0.1457851239669422 \\ } \par
+
+Iтерація 4: \parbox[t]{15cm}{x = [0.16, 1.44, 1.2, 0.88] \\
+            criterion = 0.0 \\ } \par
+
+Крім того, зазначимо проміжні матриці $C$ та $D$:
+\[  
+    C=
+    \begin{pmatrix}
+        0 & -0.11570248 & -0.28099174 & -0.09090909 \\
+        0 & 0 & -0.22857143 & 0 \\
+        0 & 0 & 0 & 0 \\
+        0 & 0 & -0.6 & 0 \\
+    \end{pmatrix},\
+    D = 
+    \begin{pmatrix}
+        0.74380165 \\
+        1.71428571 \\
+        1.2 \\
+        1.6 \\
+    \end{pmatrix}    
+\]
+
+І наостанок був обрахований вектор нев'язки $r=|B^{\diamond}-A^{\diamond}x|$, який вказує похибку обчислень 
+(коротше кажучи, це перевірка правильності розв'язку):
+\[ r =  (0, 0, 0, 0) \]
+            
+Судячи з вектора нев'язки $r$, отриманий розв'язок $x=(0.16, 1.44, 1.2, 0.88)$ і є розв'язком 
+початкової системи рівнянь $Ax=B$, зображеної у виразі (\ref{start equations}).
+Отже, остаточний розв'язок: \[ x_1=0.16,\ x_2=1.44,\ x_3=1.2,\ x_4=0.88 \]
+
+\newpage
+\subsection*{Контрольні запитання}
+
+\begin{enumerate}
+    \item \textit{В чому полягає основна відмінність прямих та ітераційних методів розв’я\-зання СЛАР?}
+
+    Основна відмінність полягає у припущенні, що навіть якщо в ітераційних методах (зокрема у методі простої 
+    ітерації та у методі Зейделя) обчислення ведуться без округлення, то це дозволяє отримати розв'язок 
+    заданої системи лише із заданою точністю.
+
+    \item \textit{Який метод буде збігатись швидше при однакових вихідних даних – метод Зейделя чи
+    метод простої ітерації?}
+
+    Ітераційні методи можуть повільно збігатися. До того ж випадки поганої збіжності складно ідентифікуються. 
+    На противагу прямим методам, в ітераційних кількість операцій заздалегідь невідома. Припускаю, що за 
+    однакових вихідних даних неможливо визначити напевне, який з методів буде збігатися швидше.  
+
+    \item \textit{Чи необхідний для методу Зейделя етап приведення до діагональної переваги? Чому?}
+    
+    Для методу Зейделя етап приведення до діагональної переваги не є обов'язко\-вим (проте іноді все ж бажаний). 
+    Вся справа у тому, що зазначений метод справедливий для довільної симетричної додатньо визначеної матриці. Саме тому 
+    часто достатньо буває віднайти саме таку матрицю, а не зводити наявну до вигляду діагональної переваги.
+
+    \item \textit{Виведіть оцінку точності для метода простої ітерації.}
+
+    Згідно теореми, яка доводилася на лекції
+    \begin{equation}
+        \|C\Vert \leqslant \sum\limits_{j=1}^n |C_{ij}| \leqslant q < 1 \label{||C||}
+    \end{equation}
+
+    Застосовуючи вираз (\ref{||C||}) покажемо, що $|x_{k+1}-x_k| \leqslant q^k|x_1-x_0|$:
+    \begin{align*}
+        &\text{Нехай} &&
+            \begin{cases}
+                \delta_k=x_k-x_{k-1} \\
+                \delta_{k+1}=x_{k+1}-x_k \\
+            \end{cases} \xrightarrow[]{\text{підставимо в}} \
+            x_{k+1}=Cx_k+D \\
+        &\text{Отримаємо} && \delta_{k+1} + x_k = C\delta_k + Cx_{k-1} + D \\
+        &\text{З (\ref{iteration equation}) маємо} &&\delta_{k+1} + \cancel{x_k} = 
+            C\delta_k + \cancel{Cx_{k-1}} + \cancel{D}\ \Longrightarrow \ \delta_{k+1} = C\delta_k \\
+        &\text{Тоді} && |\delta_{k+1}\vert = |C\delta_k\vert \leqslant \|C\Vert |\delta_k\vert 
+            \leqslant \|C\Vert^2 |\delta_{k-1}\vert \leqslant \ldots \leqslant \|C\Vert^k |\delta_1\vert \\
+        & \text{Таким чином} && |\delta_{k+1}\vert \leqslant \|C\Vert^k |\delta_1\vert 
+            \xrightarrow[]{\text{  (\ref{||C||})  }} |x_{k+1}-x_k| \leqslant q^k|x_1-x_0|
+    \end{align*} 
+    Занотуємо цей результат:
+    \begin{equation}
+        |x_{k+1}-x_k| \leqslant q^k|x_1-x_0| \label{leqslant}
+    \end{equation}
+
+    Зазначимо, що $x^*=\lim\limits_{k\to\infty}x^k$, тоді можемо дещо видозмінити таку різницю:
+    \begin{align*}
+        |x^*-x_{k+1}| &= |x_{k+2}-x_{k+1}+x_{k+3}-x_{k+2}+x_{k+4}-x_{k+3}+\ldots| \leqslant \\
+        &\leqslant |x_{k+2}-x_{k+1}|+|x_{k+3}-x_{k+2}|+|x_{k+4}-x_{k+3}|+\ldots \leqslant \\
+        &\leqslant_{(\ref{leqslant})} q^{k+1}|x_1-x_0|+q^{k+2}|x_1-x_0|+q^{k+3}|x_1-x_0|+\ldots
+    \end{align*}
+    
+    Маємо нескінченну геометричну прогресію з кроком $q<1$ й початоковим членом $q^{k+1}$, а тому:
+    \begin{equation}
+        |x^*-x_{k+1}| \leqslant \frac{q^{k+1}}{1-q}\ |x_1-x_0|
+    \end{equation}
+
+    Перепозначивши деякі значення $x_0=x^k,\ x_1=x^{k+1}$ й скориставшись нерівністю $q^{k+1} \leqslant q$ й 
+    обмеженням точності $|x^*-x_{k+1}| < \varepsilon$, отримаємо остаточний результат:
+    \begin{equation}
+        |x^*-x_{k+1}| \leqslant \frac{q}{1-q}\ |x_{k+1}-x_k| < \varepsilon \label{criterion}
+    \end{equation}
+
+    Таким чином наведений нижче вираз
+    \[ \frac{q}{1-q}\ \max\limits_j|x_{k+1}-x_k| < \varepsilon \] 
+    і є оцінкою точності для методу простої ітерації.
+
+\end{enumerate}
+
+\end{document}

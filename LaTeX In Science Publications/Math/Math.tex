@@ -1,0 +1,70 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+
+\documentclass[14pt]{extarticle}
+
+\usepackage{fontspec}
+% \setmainfont{CMU Serif}
+\setmainfont{Times New Roman}
+\usepackage[english, ukrainian]{babel}
+
+\usepackage{geometry} 
+\geometry{left=2cm}
+\geometry{right=2cm}
+\geometry{top=2cm}
+\geometry{bottom=2cm}
+
+\usepackage{enumitem}
+\usepackage{lipsum}
+
+% \usepackage{tabularray}
+
+\usepackage{xcolor}
+\pagecolor[rgb]{0.118,0.118,0.118} % VS Code default dark background
+\color[rgb]{0.8,0.8,0.8} % VS Code default dark text color
+
+\usepackage{amsmath, amssymb}
+
+% \NewDocumentCommand: https://www.texdev.net/2010/05/23/from-newcommand-to-newdocumentcommand/
+\NewDocumentCommand\NoArguments{}{Command with no arguments, just simple text to insert.}
+\NewDocumentCommand\Addition{mmm}{#1 plus #2 equals #3}
+\NewDocumentCommand\Circle{mmO{R}}{$#1^2 + #2^2 = #3^2$}
+
+\begin{document}
+
+I'm here! ґ ї The simplest type of macro is one with no arguments at all. This isn’t going to show off xparse very much but is a starting point. The traditional method to do this is: 
+
+\begin{enumerate}[label=($\bigstar$)]
+    \item \NoArguments
+    \item Let us add some numbers: \Addition{1}{2}{3}, and then \Addition{5}{6}{11}.
+    \item Another example: \Circle{a}{b}[c] and \Circle{x}{y} are the same.
+\end{enumerate}
+
+Я пишу в \LaTeX{} різноманітні формули, наприклад: \Circle{x}{y}. Пізніше я ще напишу купу всякого. Ось, наприклад формула між абзацами:
+\begin{equation}\label{eq: circle equation}
+    x^2 + y^2 = R^2
+\end{equation}
+
+Наостанок, формула \eqref{eq: circle equation} -- \& це рівняння кола.Захищаючи Україну зараз, ми па\-м'ятаємо, що наша міцність і сила духу базуються на міцності й силі багатьох українців, які не здавалися, які мріяли та діяли заради того, щоб Україна жила. Самостійна, вільна і сильна Україна, європейська і демократична, незалежна і цілісна.
+
+Ajhvekf $ x^2$ nf \(x^2\). 
+$$ x^2 $$ \[ x^2 \] 
+
+
+$$ [ \frac{1}{2} ] $$
+$$ \left. \frac{x}{2}\, \right|_{0}^{12} $$
+
+\[
+    \begin{aligned}
+        Q_m &
+            = P(\eta > \xi_1 + \xi_2 + \ldots + \xi_m) = \int\limits_0^\infty P(\eta > \zeta_m)f_{\zeta_m}(u)du = 
+            \int\limits_0^\infty \Bigl[ 1-F_{\zeta_m}(u) \Bigr]f_{\zeta_m}(u)du = \\
+        & = \int\limits_0^\infty \frac{1}{1+u} \cdot \frac{u^{m-1}}{(m-1)!} \cdot e^{-u} du 
+          = \frac{1}{m-1} \int\limits_0^\infty \frac{u}{1+u} \cdot \frac{u^{m-2}}{(m-2)!} \cdot e^{-u} du = \\
+        & = \frac{1}{m-1} \int\limits_0^\infty \frac{u}{1+u}\ f_{\zeta_{m-1}}(u) du
+          = \frac{1}{m-1} \cdot M\frac{\xi_1 + \xi_2 + \ldots + \xi_{m-1}}{1+\xi_1 + \xi_2 + \ldots + \xi_{m-1}} \\
+        & \widehat{q} = \frac{1}{m-1} \cdot \frac{\xi_1 + \xi_2 + \ldots + \xi_{m-1}}{1+\xi_1 + \xi_2 + \ldots + \xi_{m-1}} \\
+    \end{aligned}
+\]
+
+\end{document}

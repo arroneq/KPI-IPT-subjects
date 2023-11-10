@@ -1,0 +1,122 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !TeX spellcheck = uk_UA
+
+\documentclass[14pt]{extarticle}
+
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\usepackage[english, ukrainian]{babel}
+
+\usepackage{geometry} 
+\geometry{left=2cm}
+\geometry{right=2cm}
+\geometry{top=2cm}
+\geometry{bottom=2cm}
+
+\usepackage{indentfirst} % set an additional space before a paragraph at the begining of a new section
+
+\usepackage[table,xcdraw,dvipsnames]{xcolor}
+\usepackage{color}
+
+\usepackage{hyperref}
+\definecolor{linkcolor}{HTML}{0000FF}
+\definecolor{urlcolor}{HTML}{0000FF} 
+\hypersetup{
+    pdfstartview=FitH, 
+    unicode=true, 
+    linkcolor=linkcolor, 
+    urlcolor=urlcolor, colorlinks=true
+}
+
+\usepackage{enumitem}
+\usepackage{amsmath, amssymb}
+\usepackage{lipsum}
+
+\usepackage{tabularray}
+% https://tex.stackexchange.com/questions/642623/tabularray-correct-row-numbering-in-longtblr
+\UseTblrLibrary{counter}
+
+\NewDocumentCommand\NoArguments{}{Command with no arguments, just simple text to insert.}
+\NewDocumentCommand\Addition{mmm}{#1 plus #2 equals #3}
+\NewDocumentCommand\Circle{mmO{R}}{$#1^2 + #2^2 = #3^2$}
+
+\begin{document}
+
+\section*{Математична верстка тексту}
+
+I'm here! ґ ї The simplest type of macro is one with no arguments at all. This isn’t going to show off xparse very much but is a starting point. The traditional method to do this is: 
+
+\begin{enumerate}[label=($\bigstar$)]
+    \item \NoArguments
+    \item Let us add some numbers: \Addition{1}{2}{3}, and then \Addition{5}{6}{11}.
+    \item Another example: \Circle{a}{b}[c] and \Circle{x}{y} are the same.
+\end{enumerate}
+
+Я пишу в \LaTeX{} різноманітні формули, наприклад: \Circle{x}{y}. Пізніше я ще напишу купу всякого. Ось, наприклад формула між абзацами:
+\begin{equation}\label{eq: circle equation}
+    x^2 + y^2 = R^2
+\end{equation}
+
+Наостанок, формула \eqref{eq: circle equation} -- \& це рівняння кола. Захищаючи Україну зараз, ми па\-м'ятаємо, що наша міцність і сила духу базуються на міцності й силі багатьох українців, які не здавалися, які мріяли та діяли заради того, щоб Україна жила.
+
+\section*{Оформлення таблиці}
+
+Перш ніж розглядати коротку таблицю в оточенні \texttt{tblr}, проілюструємо усі переваги використання іншого оточення, яке має назву \texttt{longtblr}: 
+
+\DefTblrTemplate{contfoot-text}{default}{\itshape\footnotesize Продовження на наступній сторінці}
+\DefTblrTemplate{conthead-text}{default}{(продовження)}
+
+\newcounter{number}\setcounter{number}{0}
+\begin{longtblr}[
+        caption={Довга таблиця}, 
+        label={table: long table},
+    ]{
+        hlines={1pt, solid}, hline{1,2,Z}={2pt, solid},
+        vlines={1pt}, vline{1,2,Z}={2pt, solid},
+        colspec={cXXXX}, % X - розтягнення колонки на доступну ширину сторінки
+        cell{1}{2}={r=1, c=4}{c},
+        column{2,3,4,5}={mode=math, c},
+        row{1}={mode=text, bg=purple7, fg=white, font=\bfseries},
+        row{even}={bg=gray9},
+    }
+    
+    \textnumero                            & Таблиця множення &               &                &               \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+    \refstepcounter{number}\arabic{number} & 2\times 2=4      &  3\times 3=9  & 4\times 4=16   &  5\times 5=25 \\
+\end{longtblr}
+
+\vspace{0.4cm}
+В порівнянні, оточення \texttt{tblr} має свої особливості. Наприклад, дещо незграбно відображається заголовок над таблицею --- як результат, назву таблиці було зсунуто вниз.
+
+\begin{table}[h!]\centering
+    \begin{tblr}{
+            hlines={1pt,solid}, vlines={1pt,solid},
+            colspec={cc},
+            cell{3}{1-Z}={wd=6cm},
+            cell{1}{1}={r=1, c=2}{c},
+            row{3}={valign={m}, font=\itshape}
+        }
+        
+        Холодні пори року & \\
+        Зима & Осінь \\
+        Українська зима порівняно м'яка, з частими відлигами. Проте інколи бувають сильні снігопади, хуртовини, ожеледь, тумани, у горах можуть сходити снігові лавини 
+        & Загалом весна є наслідком приходу сонячного тепла, однак на погоду впливають також інші, менш передбачувані, явища. Навесні погода буває особливо мінливою: з частими похолоданнями, вітрами, заморозками, різкими підняттями температури тощо \\
+    \end{tblr}
+    \caption{Коротка таблиця}
+    \label{table: short table}
+\end{table}
+
+\end{document}

@@ -1,0 +1,117 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+
+\documentclass[14pt]{extarticle}
+
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\usepackage[english, ukrainian]{babel}
+
+\usepackage{microtype}
+
+\usepackage{geometry} 
+\geometry{left=2cm, right=2cm, top=2cm, bottom=2cm}
+
+\usepackage{enumitem}
+\usepackage{lipsum}
+
+\usepackage{xcolor}
+\pagecolor[rgb]{0.118,0.118,0.118}
+\color[rgb]{0.8,0.8,0.8}
+
+\usepackage{amsmath, amssymb}
+
+\usepackage{tikz}
+\usepackage{pgf}
+\usetikzlibrary{calc}
+
+\begin{document}
+
+\lipsum[1]
+
+\begin{figure}[h!]
+    \newcounter{r}
+    \newcounter{l}
+    \begin{minipage}[h]{0.49\linewidth}\centering
+        \begin{tikzpicture}
+            \setcounter{r}{1}
+            \setcounter{l}{5}
+
+            \foreach \angle in {0,45,...,135}{
+                \node[draw, red, circle] (\ther) at (\angle:2) {$\ther$};
+                \node[draw, red, circle] (\thel) at (\angle+180:2) {$\thel$};
+
+                \draw[->, line width=1pt] (\ther) -- (\thel);
+                \draw[->, line width=1pt] (\thel) -- (\ther);
+
+                \stepcounter{r}
+                \stepcounter{l}
+            }
+        \end{tikzpicture}
+
+        (a) Заголовок
+    \end{minipage}
+    \hfill
+    \begin{minipage}[h]{0.49\linewidth}\centering
+        \begin{tikzpicture}
+            \setcounter{r}{1}
+            \setcounter{l}{3}
+
+            % змінив тільки межі у циклі
+            \foreach \angle in {0,90}{
+                \node[draw, red, circle] (\ther) at (\angle:2) {$\ther$};
+                \node[draw, red, circle] (\thel) at (\angle+180:2) {$\thel$};
+
+                \draw[->, line width=1pt] (\ther) -- (\thel);
+                \draw[->, line width=1pt] (\thel) -- (\ther);
+
+                \stepcounter{r}
+                \stepcounter{l}
+            }
+        \end{tikzpicture}
+    \end{minipage}
+\end{figure}
+
+\lipsum[2]
+
+\begin{figure}[h!]
+    \begin{minipage}[h]{0.49\linewidth}\centering
+        \begin{tikzpicture}
+            \coordinate[label=180:$A$] (A) at (0:0);
+            \coordinate[label=0:$B$] (B) at (15:6);
+            \coordinate[label=$C$] (C) at (40:2);
+            \coordinate[label=0:$D$] (D) at (5:4);
+    
+            \draw (A) -- (B);
+            \draw ($(A)!(C)!(B)$) -- (C);
+            \draw ($(A)!(D)!(B)$) -- (D);
+
+            \fill[red] (A) circle [radius=2.5pt];
+            \fill[red] (B) circle [radius=2.5pt];
+            \fill[red] (C) circle [radius=2.5pt];
+            \fill[red] (D) circle [radius=2.5pt];
+        \end{tikzpicture}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[h]{0.49\linewidth}\centering
+        \begin{tikzpicture}
+            \coordinate[label=180:$A$] (A) at (0:0);
+            \coordinate[label=0:$B$] (B) at (-5:6);  % змінив тільки кут нахилу точки В
+            \coordinate[label=$C$] (C) at (40:2);
+            \coordinate[label=0:$D$] (D) at (5:4);
+    
+            \draw (A) -- (B);
+            \draw ($(A)!(C)!(B)$) -- (C);
+            \draw ($(A)!(D)!(B)$) -- (D);
+
+            \fill[red] (A) circle (0.08cm);
+            \fill[red] (B) circle (0.08cm);
+            \fill[red] (C) circle (0.08cm);
+            \fill[red] (D) circle (0.08cm);
+        \end{tikzpicture}
+    \end{minipage}
+\end{figure}
+
+\lipsum[4]
+
+\end{document}

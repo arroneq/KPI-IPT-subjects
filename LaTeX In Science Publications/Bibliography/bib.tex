@@ -1,0 +1,77 @@
+% !TeX program = lualatex
+% !TeX encoding = utf8
+% !BIB program = biber
+
+\documentclass[14pt]{extarticle}
+
+% bibstyles https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwj0zY3pkMr9AhUK_CoKHXAlDTwQFnoECAkQAQ&url=http%3A%2F%2Ftug.ctan.org%2Finfo%2Fbiblatex-cheatsheet%2Fbiblatex-cheatsheet.pdf&usg=AOvVaw2QMCRt2AGY8VMmFGgM17aS
+\usepackage[bibstyle=gost-numeric]{biblatex}
+\addbibresource{bibliography.bib}
+\usepackage[autostyle=false]{csquotes}
+
+\usepackage{fontspec}
+% \setmainfont{CMU Serif}
+\setmainfont{Times New Roman}
+\usepackage[english, ukrainian]{babel}
+
+\usepackage{geometry} 
+\geometry{left=2cm}
+\geometry{right=2cm}
+\geometry{top=2cm}
+\geometry{bottom=2cm}
+
+\usepackage{enumitem}
+\usepackage{lipsum}
+
+% \usepackage{tabularray}
+
+\usepackage{xcolor}
+
+\usepackage{hyperref}
+\definecolor{linkcolor}{HTML}{0000FF}
+\definecolor{urlcolor}{HTML}{0000FF} 
+\definecolor{citecolor}{HTML}{0000FF} 
+\hypersetup{
+    pdfstartview=FitH, 
+    unicode=true, 
+    linkcolor=linkcolor, 
+    urlcolor=urlcolor,
+    citecolor=citecolor, 
+    colorlinks=true
+}
+
+\usepackage{amsmath, amssymb}
+
+% \NewDocumentCommand: https://www.texdev.net/2010/05/23/from-newcommand-to-newdocumentcommand/
+\NewDocumentCommand\NoArguments{}{Command with no arguments, just simple text to insert.}
+\NewDocumentCommand\Addition{mmm}{#1 plus #2 equals #3}
+\NewDocumentCommand\Circle{mmO{R}}{$#1^2 + #2^2 = #3^2$}
+
+\begin{document}
+
+I'm here! The simplest type of macro is one with no arguments at all. This isn’t going to show off xparse very much but is a starting point. The traditional method to do this is: 
+
+\begin{enumerate}[label=($\bigstar$)]
+    \item \NoArguments
+    \item Let us add some numbers: \Addition{1}{2}{3}, and then \Addition{5}{6}{11}.
+    \item Another example: \Circle{a}{b}[c] and \Circle{x}{y} are the same.
+\end{enumerate}
+
+Я пишу в \LaTeX{} різноманітні формули, наприклад: \Circle{x}{y}. Пізніше я ще напишу купу всякого. Ось, наприклад формула між абзацами:
+\begin{equation}\label{eq: circle equation}
+    x^2 + y^2 = R^2
+\end{equation}
+
+\newcounter{par}
+\newcommand{\parcount}{--\hspace{0.1cm}\addtocounter{par}{1}\thepar\hspace{0.1cm}--\hspace{0.2cm}}
+
+\parcount \lipsum[2]
+
+\parcount \lipsum[3]
+
+\parcount Наостанок, формула \eqref{eq: circle equation} -- це рівняння кола.Захищаючи Україну зараз, ми пам'ятаємо, що наша міцність і \cite{Gentle1998} сила духу базуються на міцності й силі багатьох українців, які не здавалися, які мріяли та діяли заради того, щоб Україна жила. Самостійна, \cite{Eddy2004} вільна і сильна Україна, європейська і демократична, \cite{Sharma2009} незалежна і цілісна.
+
+\newpage
+\printbibliography
+
+\end{document}

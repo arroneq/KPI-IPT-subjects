@@ -1,0 +1,44 @@
+\begin{tikzpicture}
+    \begin{axis}[
+        width=13cm,
+        scale only axis,
+        scaled y ticks=base 10:4,
+        title={Калібрувальна крива котушок Гельмгольца},
+        xlabel=$I\ /\ \text{А}$,
+        ylabel=$B\ /\ \text{Тл}$,
+        ymin=5.6*10^-4, ymax=17*10^-4,
+        xmin=0.8, xmax=2.5,
+        grid=both,
+        grid style={draw=gray!30},
+        minor tick num=5,
+        minor grid style={draw=gray!10},
+        legend style={at={(0.05,0.95)}, anchor=north west, cells={anchor=west}, draw=none},
+    ]
+        \addplot [
+            red, 
+            only marks, mark=*,
+            error bars/.cd,
+                x dir=both, x explicit,
+                y dir=both, y explicit,
+                error bar style={black},
+        ] table [
+            x error=xdelta, 
+            y error=ydelta,
+        ] {data/data.txt};
+        
+        \addplot[blue] table [
+            y={create col/linear regression={y=y}}, % compute a linear regression from the input table
+        ] {data/data.txt};
+
+        \addplot[blue, no marks, domain=0:2.5]{\pgfplotstableregressiona*x+\pgfplotstableregressionb};
+
+        \legend{\ Експериментальні дані, \ Лінійна апроксимація за моделлю $B=C\cdot I$};
+        % \node at (0.95,0.05) {P3};
+        % \node [fill=white,draw=black,anchor=center] at
+        % (1,7,1) {X};
+        % \node[] at (0.5,0.5) {absolute in pgfplots coordinates};
+        % \node[above,red] at (2,10*-4) {$\log_{10} 10=1$};
+        \node[anchor=west] at (axis cs:1.7,7e-4) {$C=(6.83\pm 0.24)\cdot 10^{-4}$ Тл/A};
+        \node[anchor=west] at (axis cs:1.7,6.4e-4) {$\chi^2\sqrt{\chi^2}=0.93,\ R^2=0.99$};
+    \end{axis}
+\end{tikzpicture}

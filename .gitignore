@@ -1,0 +1,46 @@
+# git init && git symbolic-ref HEAD refs/heads/main
+# rm -rf .git
+
+/C++ Data Algorithms/Data Algorithms/*/*
+/C++ Data Algorithms/Qbit/*/*/*
+
+# ignore everything under Cloud Computing
+/Cloud Computing/*/*
+# but except folders itself
+!/Cloud Computing/*/*/
+
+/Computer Graphics/*/*
+!/Computer Graphics/*/*/
+
+/Computer Vision/*/__pycache__
+
+/LaTeX In Science Publications/*/*
+!/LaTeX In Science Publications/*/*/
+
+/Markov Models/EM-algorithm/*/*
+!/Markov Models/EM-algorithm/*/*/
+
+/Markov Models/HMM/*/__pycache__
+/Markov Models/HMM/*/*/*
+!/Markov Models/HMM/*/*/*/
+
+/Markov Models/MCMC/*/*
+!/Markov Models/MCMC/*/*/
+
+/Numerical Methods/*/*
+!/Numerical Methods/*/*/
+
+*.out
+
+!*.ipynb
+!*.py
+!*.html
+!*.txt
+!*.cpp
+!*.h
+!*.png
+
+!*.tex
+!*.cls
+!*.bib
+!*.pdf
